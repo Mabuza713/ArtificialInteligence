@@ -22,9 +22,10 @@ class Perceptron(ABC):
         for iteration in range(amount_of_iterations):
             for x, y in zip(X, Y):
                 y_pred = self.activation_function(x)
-                error = y - y_pred
-                self.weights = [self.weights[index] + self.learning_rate * error * x[index] for index in range(len(self.weights))]
-                self.bias = self.bias +self.learning_rate * error
+                if y_pred != y:
+                    error = y - y_pred
+                    self.weights = [self.weights[index] + self.learning_rate * error * x[index] for index in range(len(self.weights))]
+                    self.bias = self.bias +self.learning_rate * error
 
         print(self.weights)
 
@@ -34,7 +35,12 @@ class UnipolarPerceptron(Perceptron):
         return 1 if self.weighted_sum(X) >= 0 else 0
 
 
+"""
+W perceptronie bipolarnym funkcja aktywacji zwraca dwie wartości: 1 lub -1,
+odróżnia to ją od perceptrony unipolarnego. Wprowadzenie wartości -1 pozwala na
+zwiększenie intensywności uczenia tzn. częstości modifikowania wag,
 
+"""
 class BipolarPerceptron(Perceptron):
     def activation_function(self, X):
         return 1 if self.weighted_sum(X) >= 0 else -1
