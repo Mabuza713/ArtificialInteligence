@@ -81,8 +81,7 @@ def create_plot(X, Y, perceptron, nazwa_operacji, name=None):
 
     if len(perceptron.weights) == 1:
         title = title + " z jednym wejściem"
-    elif len(perceptron.weights) == 5:
-        title = title + "z pięcioma wejściami"
+
     else:
         title = title + " z dwoma wejściami"
     title = title + f"\ndla operacji {nazwa_operacji}"
@@ -102,34 +101,6 @@ def create_plot(X, Y, perceptron, nazwa_operacji, name=None):
             plt.savefig(f"{name}.jpg")
             plt.close()
         plt.show()
-    elif len(perceptron.weights) == 5:
-        colors_array = ["red" if y == 1 else "blue" for y in Y]
-        plt.scatter([temp[0] for temp in X], [temp[1] for temp in X], c=colors_array, marker='o')
-
-        ax_lim = 1.5
-        x_vals_grid = np.linspace(-ax_lim, ax_lim, 200)
-        y_vals_grid = np.linspace(-ax_lim, ax_lim, 200)
-        X_grid, Y_grid = np.meshgrid(x_vals_grid, y_vals_grid)
-
-
-        boundry = (perceptron.weights[0] * X_grid ** 2 + perceptron.weights[1] * Y_grid ** 2 + perceptron.weights[2] * X_grid * Y_grid +
-             perceptron.weights[3] * X_grid + perceptron.weights[4] * Y_grid + perceptron.bias)
-
-        boundry_initial = (perceptron.initial_weights[0] * X_grid ** 2 + perceptron.initial_weights[1] * Y_grid ** 2 + perceptron.initial_weights[2] * X_grid * Y_grid +
-                 perceptron.initial_weights[3] * X_grid + perceptron.initial_weights[4] * Y_grid + perceptron.initial_bias)
-
-        plt.contour(X_grid, Y_grid, boundry, levels=[0], colors='green')
-        plt.contour(X_grid, Y_grid, boundry_initial, levels=[1], colors='cyan', linestyles='--')
-
-
-        plt.ylim(-1.5, 1.5)
-        plt.xlim(-1.5, 1.5)
-        plt.grid(True)
-        if name:
-            plt.savefig(f"{name}.jpg")
-            plt.close()
-        plt.show()
-
 
     else:
         colors_array = ["red" if y == 1 else "blue" for y in Y]
