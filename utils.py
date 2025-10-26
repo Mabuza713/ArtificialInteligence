@@ -68,6 +68,72 @@ class BipolarPerceptron(Perceptron):
     def activation_function(self, X):
         return 1 if self.weighted_sum(X) > 0 else -1
 
+class Sigmoid(Perceptron):
+    def __init__(self, weights, bias, learning_rate, dir_name=""):
+        super().__init__(weights, bias, learning_rate, dir_name)
+        self.activation = 0
+
+    def activation_function(self, X):
+        self.activation = 1 / (1 + np.exp(-self.weighted_sum(X)))
+        return 1 / (1 + np.exp(-self.weighted_sum(X)))
+
+    def derivative(self):
+        return self.activation * (1 - self.activation)
+
+class NeuralNetwork:
+    def __init__(self, hidden_layer, output_layer, learnign_rate):
+        self.hidden_layer = hidden_layer
+        self.output_layer = output_layer
+        self.learning_rate = learnign_rate
+
+    # Majac jakis input, chcemy przewidziec jaka bedzie wartosc, tak jakby idziemy od lewej do
+    # prawej w naszej sieci
+    def forward_propagation(self, X):
+        for perceptron in self.hidden_layer:
+            perceptron.activation_function(X)
+
+        for perceptron in self.output_layer:
+            perceptron.activation_function([x.activation for x in self.hidden_layer])
+
+        return [perceptron.activation for perceptron in self.output_layer]
+
+    # Jest to proces oceniania aktualnych wag w naszej sieci, najpierw przechodzimy
+    # od lewej do prawej w celu uzyskania naszej predykcji, następnie porównujemy ją
+    # z outputem z naszego zbioru uczącego i wrazie niezgodnosci korygujemy wagi idąc od
+    # prawej do lewej tzn. zaczynając od warstwy wyjściowej
+    def back_propagation(self, X, Y):
+        for index, output_perceptron in enumerate(self.output_layer):
+            error =  output_perceptron.activation - Y[index]
+
+            for j, hidden_perceptron in enumerate(self.hidden_layer):
+                new_weight = error * output_perceptron.derivative() * hidden_perceptron.activation
+                output_perceptron.weights[j] -= new_weight * self.learning_rate
+            output_perceptron.bias -= error * output_perceptron.derivative() * self.learning_rate
+
+
+        for i, hidden_perceptron in enumerate(self.hidden_layer):
+            sum_error = 0
+            for j, output_perceptron in enumerate(self.output_layer):
+                output_error = output_perceptron.activation - Y[j]
+                output_error *= output_perceptron.derivative()
+                output_error *= output_perceptron.weights[i]
+                sum_error += output_error
+
+            hidden_error = sum_error * hidden_perceptron.derivative()
+            for k in range(0, len(X)):
+                hidden_perceptron.weights[k] -= hidden_error * X[k] * self.learning_rate
+
+            hidden_perceptron.bias -= hidden_error * self.learning_rate
+
+
+
+    def train(self, X, Y, amount_of_iterations):
+        for e in range(amount_of_iterations):
+            for x, y in zip(X, Y):
+                self.forward_propagation(x)
+                self.back_propagation(x, y)
+
+
 
 # STWORZONE Z POMOCĄ AI, GDZIE POSŁUŻYŁO TYLKO
 # I WYŁĄCZNIE DO STWORZENIA WYKRESÓW WZORY ZOSTAŁY
@@ -121,3 +187,18 @@ def create_plot(X, Y, perceptron, nazwa_operacji, name=None):
             plt.savefig(f"{name}.jpg")
             plt.close()
         plt.show()
+
+def create_plot_with_two(X, Y, perceptrons):
+    for perceptron in perceptrons:
+        colors_array = ["red" if y == 1 else "blue" for y in Y]
+        plt.scatter([temp[0] for temp in X], [temp[1] for temp in X], c=colors_array, marker='o')
+        x_vals = np.linspace(-1,  1.25, 200)
+        y_vals = -(perceptron.weights[0]*x_vals + perceptron.bias)/perceptron.weights[1]
+        y_vals_ini = -(perceptron.initial_weights[0]*x_vals + perceptron.initial_bias)/perceptron.initial_weights[1]
+        plt.plot(x_vals, y_vals, color='green')
+        plt.plot(x_vals, y_vals_ini, color='yellow',linestyle="--" )
+    plt.legend()
+    plt.ylim(-0.5, 1.5)
+    plt.xlim(-0.5, 1.5)
+    plt.grid(True)
+    plt.show()
