@@ -2,9 +2,10 @@ from abc import ABC, abstractmethod
 from matplotlib import pyplot as plt
 import numpy as np
 import random
+import math
 
 class Perceptron(ABC):
-    def __init__(self, weights, bias, learning_rate,dir_name = ""):
+    def __init__(self, weights, bias, learning_rate = 0,dir_name = ""):
         self.initial_weights = weights
         self.initial_bias = bias
 
@@ -71,8 +72,9 @@ class BipolarPerceptron(Perceptron):
     def activation_function(self, X):
         return 1 if self.weighted_sum(X) > 0 else -1
 
+
 class Sigmoid(Perceptron):
-    def __init__(self, weights, bias, learning_rate, dir_name=""):
+    def __init__(self, weights, bias, learning_rate = 0, dir_name=""):
         super().__init__(weights, bias, learning_rate, dir_name)
         self.activation = 0
 
@@ -82,6 +84,36 @@ class Sigmoid(Perceptron):
 
     def derivative(self):
         return self.activation * (1 - self.activation)
+
+
+class Relu(Perceptron):
+    def __init__(self, weights, bias, learning_rate=0, dir_name=""):
+        super().__init__(weights, bias, learning_rate, dir_name)
+        self.activation = 0
+
+    def activation_function(self, X):
+        self.activation = max(0, self.weighted_sum(X))
+        return self.activation
+
+    # Troche naciagane bo nie da sie obliczyc z tego pochodnej ale sie tak przyjmuje
+    def derivative(self):
+        return 1 if self.activation > 0 else 0
+
+class Softmax(Perceptron):
+    def __init__(self, weights, bias, learning_rate = 0, dir_name=""):
+        super().__init__(weights, bias, learning_rate, dir_name)
+        self.exp_value = 0
+        self.activation = 0
+
+
+    # X tutaj stosowane jest tak jakby jak mamy wszystkie outputy w sensie prawdopodobienstwa
+    # to bierzemy ich exp i dzielimy przez to, to jest wlasnie ten X
+    def activation_function(self, X):
+        self.activation = self.exp_value / X
+
+    def derivative(self):
+        return 1
+
 
 class NeuralNetwork:
     def __init__(self, hidden_layer, output_layer, learnign_rate):
@@ -104,8 +136,21 @@ class NeuralNetwork:
         for perceptron in self.hidden_layer:
             perceptron.activation_function(X)
 
-        for perceptron in self.output_layer:
-            perceptron.activation_function([x.activation for x in self.hidden_layer])
+        if isinstance(self.output_layer[0], Softmax):
+            output_weigted_sums = []
+            for perceptron in self.output_layer:
+                perceptron.exp_value = perceptron.weighted_sum([perceptron.activation for perceptron in self.hidden_layer])
+                output_weigted_sums.append(perceptron.exp_value)
+
+            for perceptron in self.output_layer:
+                perceptron.exp_value = np.exp(perceptron.exp_value - max(output_weigted_sums))
+
+            sum_of_exp = np.sum([perceptron.exp_value for perceptron in self.output_layer])
+            for perceptron in self.output_layer:
+                perceptron.activation_function(sum_of_exp)
+        else:
+            for perceptron in self.output_layer:
+                perceptron.activation_function([x.activation for x in self.hidden_layer])
 
         return [perceptron.activation for perceptron in self.output_layer]
 
@@ -220,7 +265,7 @@ def format_list(lst, decimals=2):
 
 def one_hot_encode(y):
     n_classes = np.max(y) + 1
-    one_hot = np.zeros((y.shape[0], n_classes))
+    one_hot = np.zeros((np.array(y).shape[0], n_classes))
     for i, val in enumerate(y):
         one_hot[i, val[0]] = 1
     return one_hot
