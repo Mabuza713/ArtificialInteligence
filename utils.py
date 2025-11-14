@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from matplotlib import pyplot as plt
 import numpy as np
+import random
 
 class Perceptron(ABC):
     def __init__(self, weights, bias, learning_rate,dir_name = ""):
@@ -42,13 +43,15 @@ class Perceptron(ABC):
                     self.weights = [self.weights[index] + self.learning_rate * error * x[index] for index in range(len(self.weights))]
                     self.bias = self.bias +self.learning_rate * error
 
-            if iteration % 10 == 0 or no_change:
+            if iteration % 1 == 0 or no_change:
                 print(no_change)
                 print('Iteracja: ', iteration)
                 print(f"Wagi w iteracji [poprzedniej - teraźniejszej]: {temp_weights} - {self.weights}")
                 print(f"obciążenie w iteracji [poprzedniej - teraźniejszej]: {temp_bias} - {self.bias}")
                 print(f"Początkowe wartości wag: {self.initial_weights}")
                 print(f"Początkowe wartości obciążenia: {self.initial_bias}")
+                if no_change:
+                    print(f"blad: {error}")
                 print("-------------------------------------------")
                 print()
                 create_plot(X, Y, self, "temp", f"{self.dir_name}/{iteration}")
@@ -85,6 +88,15 @@ class NeuralNetwork:
         self.hidden_layer = hidden_layer
         self.output_layer = output_layer
         self.learning_rate = learnign_rate
+
+    def reset_weights(self):
+        for neuron in self.hidden_layer:
+            neuron.weights = [random.uniform(-1, 1) for _ in neuron.weights]
+            neuron.bias = random.uniform(-1, 1)
+
+        for neuron in self.output_layer:
+            neuron.weights = [random.uniform(-1, 1) for _ in neuron.weights]
+            neuron.bias = random.uniform(-1, 1)
 
     # Majac jakis input, chcemy przewidziec jaka bedzie wartosc, tak jakby idziemy od lewej do
     # prawej w naszej sieci
@@ -132,7 +144,6 @@ class NeuralNetwork:
             for x, y in zip(X, Y):
                 self.forward_propagation(x)
                 self.back_propagation(x, y)
-
 
 
 # STWORZONE Z POMOCĄ AI, GDZIE POSŁUŻYŁO TYLKO
@@ -202,3 +213,14 @@ def create_plot_with_two(X, Y, perceptrons):
     plt.xlim(-0.5, 1.5)
     plt.grid(True)
     plt.show()
+
+#do formatowanie wartosci np na decimals w liscie
+def format_list(lst, decimals=2):
+    return [round(float(x), decimals) for x in lst]
+
+def one_hot_encode(y):
+    n_classes = np.max(y) + 1
+    one_hot = np.zeros((y.shape[0], n_classes))
+    for i, val in enumerate(y):
+        one_hot[i, val[0]] = 1
+    return one_hot
