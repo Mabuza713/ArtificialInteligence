@@ -159,6 +159,7 @@ class NeuralNetwork:
     # z outputem z naszego zbioru uczącego i wrazie niezgodnosci korygujemy wagi idąc od
     # prawej do lewej tzn. zaczynając od warstwy wyjściowej
     def back_propagation(self, X, Y):
+        old_weights = [output_perceptron.weights[:] for output_perceptron in self.output_layer]
         for index, output_perceptron in enumerate(self.output_layer):
             error =  output_perceptron.activation - Y[index]
 
@@ -173,7 +174,7 @@ class NeuralNetwork:
             for j, output_perceptron in enumerate(self.output_layer):
                 output_error = output_perceptron.activation - Y[j]
                 output_error *= output_perceptron.derivative()
-                output_error *= output_perceptron.weights[i]
+                output_error *= old_weights[j][i]
                 sum_error += output_error
 
             hidden_error = sum_error * hidden_perceptron.derivative()
