@@ -158,7 +158,7 @@ class NeuralNetwork:
     # od lewej do prawej w celu uzyskania naszej predykcji, następnie porównujemy ją
     # z outputem z naszego zbioru uczącego i wrazie niezgodnosci korygujemy wagi idąc od
     # prawej do lewej tzn. zaczynając od warstwy wyjściowej
-    def back_propagation(self, X, Y):
+    def back_propagation(self, X, Y, verbose):
         old_weights = [output_perceptron.weights[:] for output_perceptron in self.output_layer]
         for index, output_perceptron in enumerate(self.output_layer):
             error =  output_perceptron.activation - Y[index]
@@ -170,26 +170,50 @@ class NeuralNetwork:
 
 
         for i, hidden_perceptron in enumerate(self.hidden_layer):
+            if verbose:
+                print("-----")
+                print(f"hidden perceptron {i}")
+                print("")
+
             sum_error = 0
             for j, output_perceptron in enumerate(self.output_layer):
+                if verbose:
+                    print(f"\toutput perceptron {j}")
                 output_error = output_perceptron.activation - Y[j]
+                if verbose:
+                    print(f"\toutput error: {output_error}")
+
+
                 output_error *= output_perceptron.derivative()
+                if verbose:
+                    print(f"\toutput der: {output_perceptron.derivative()}")
+
                 output_error *= old_weights[j][i]
+                if verbose:
+                    print(f"\toutput old weight: {old_weights[j][i]}")
+                    print("")
                 sum_error += output_error
-
             hidden_error = sum_error * hidden_perceptron.derivative()
+            if verbose:
+                print(f"SUMA: {sum_error}")
+                print(f"hidden der: {hidden_perceptron.derivative()}")
+                print("")
             for k in range(0, len(X)):
+                if verbose:
+                    print(f"input index {k}")
+                    print(f"\thidden error: {hidden_error * X[k]}")
                 hidden_perceptron.weights[k] -= hidden_error * X[k] * self.learning_rate
-
+            if verbose:
+                print("------")
             hidden_perceptron.bias -= hidden_error * self.learning_rate
 
 
 
-    def train(self, X, Y, amount_of_iterations):
+    def train(self, X, Y, amount_of_iterations, verbose = False):
         for e in range(amount_of_iterations):
             for x, y in zip(X, Y):
                 self.forward_propagation(x)
-                self.back_propagation(x, y)
+                self.back_propagation(x, y, verbose)
 
 
 # STWORZONE Z POMOCĄ AI, GDZIE POSŁUŻYŁO TYLKO
