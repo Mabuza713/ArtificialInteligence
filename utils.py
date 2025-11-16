@@ -299,3 +299,10 @@ def one_hot_encode(y):
     for i, val in enumerate(y):
         one_hot[i, val[0]] = 1
     return one_hot
+
+def acc_check(y_pred, y_true, acc):
+    pred_class = np.argmax(y_pred)
+    true_class = np.argmax(y_true)
+
+    if pred_class == true_class:
+        acc.append(1)
