@@ -111,6 +111,8 @@ class Softmax(Perceptron):
     def activation_function(self, X):
         self.activation = self.exp_value / X
 
+    # Nie jest to pochodna softmaxa, ale to przez to że jak liczymy CCE to nie mnożymy razy
+    # pochodną softmaxa, więc pominiecie tego stepu to poprostu pomnożenie razy 1
     def derivative(self):
         return 1
 
@@ -162,7 +164,10 @@ class NeuralNetwork:
         old_weights = [output_perceptron.weights[:] for output_perceptron in self.output_layer]
         for index, output_perceptron in enumerate(self.output_layer):
             error =  output_perceptron.activation - Y[index]
-
+            if verbose:
+                print("-----")
+                print(f"output perceptron {index}")
+                print(f"\terror: {error}")
             for j, hidden_perceptron in enumerate(self.hidden_layer):
                 new_weight = error * output_perceptron.derivative() * hidden_perceptron.activation
                 output_perceptron.weights[j] -= new_weight * self.learning_rate
