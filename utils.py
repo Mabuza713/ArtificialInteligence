@@ -12,6 +12,7 @@ class Perceptron(ABC):
         self.weights = weights
         self.bias = bias
         self.learning_rate = learning_rate
+        self.activation = 0
 
         self.dir_name = dir_name
 
@@ -76,7 +77,6 @@ class BipolarPerceptron(Perceptron):
 class Sigmoid(Perceptron):
     def __init__(self, weights, bias, learning_rate = 0, dir_name=""):
         super().__init__(weights, bias, learning_rate, dir_name)
-        self.activation = 0
 
     def activation_function(self, X):
         self.activation = 1 / (1 + np.exp(-self.weighted_sum(X)))

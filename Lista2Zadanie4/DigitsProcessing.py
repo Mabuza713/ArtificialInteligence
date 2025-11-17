@@ -33,7 +33,7 @@ def load_data_from_image(image_directory, realLabel):
     img = Image.open(image_directory).convert("RGB")
     for x in range(0, 8):
         for y in range(0, 8):
-            final_array.append(1 if sum(img.getpixel((x, y))) < 200 else 0)
+            final_array.append(1 if sum(img.getpixel((y, x))) < 200 else 0)
 
     return final_array, [[realLabel]]
 
