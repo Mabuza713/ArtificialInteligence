@@ -216,9 +216,17 @@ class NeuralNetwork:
 
     def train(self, X, Y, amount_of_iterations, verbose = False):
         for e in range(amount_of_iterations):
+            suma_bledu = 0
             for x, y in zip(X, Y):
                 self.forward_propagation(x)
+                if isinstance(self.output_layer[0], Softmax):
+                    for index in range(len(y)):
+                        suma_bledu -= math.log(self.output_layer[index].activation) * y[index]
+                else:
+                    for index in range(len(y)):
+                        suma_bledu += 0.5 * (y[index] - self.output_layer[index].activation) ** 2
                 self.back_propagation(x, y, verbose)
+            print(f'iteracja {e}- wartość f.kosztu: {suma_bledu}')
 
 
 # STWORZONE Z POMOCĄ AI, GDZIE POSŁUŻYŁO TYLKO
