@@ -67,6 +67,7 @@ class Traveler:
         self.path = [(maze.start["x"], maze.start["y"])]
         self.finished = False
         self.maze = maze
+        self.evaulation_value = 0
         # test
 
 
@@ -98,9 +99,9 @@ class Traveler:
         score =- dist
         score = score -  len(self.path) * 0.01
 
-
         if self.finished :
             score += 1000
+        self.evaulation_value = score
 
         return score
 
@@ -152,7 +153,7 @@ class PopulationManager:
             for row in view:
                 file.write("".join(row) + "\n")
 
-    def find_path(self):
+    def find_path(self, use_elitism=True, use_roulette=True, use_ranking=True):
         for generation in range(10000):
             for traveler in self.current_population:
                 traveler.simulate()
@@ -166,8 +167,29 @@ class PopulationManager:
                     print("CEL OSIAGNIETY")
                     break
 
+            new_population = []
+
+
+            # DO SPRAWDZENIA TO JEST
             # elityzm mozna dodac kilu pierwszy np.3
-            new_population = self.current_population[ :self.elite_variable]
+            if use_elitism:
+                new_population = self.current_population[ :self.elite_variable]
+
+            if use_roulette:
+                scores = [t.evaulation_value for t in self.current_population]
+                min_score = min(scores)
+
+                weights = [(score - min_score) / sum(scores)  + 1for score in scores]
+                new_population.extend(random.choices(self.current_population, weights=weights, k=1))
+
+            if use_ranking:
+                k = 4
+                q = 0
+                for i in range(k):
+                    for j in range(0, k - q):
+                        new_population.append(self.current_population[q])
+                    q += 1
+
 
             # Wybieramy tylko najlepszych do przekazania cech
             parents = self.current_population[ :self.generation_split]
