@@ -183,7 +183,7 @@ class PopulationManager:
                 new_population.extend(random.choices(self.current_population, weights=weights, k=1))
 
             if use_ranking:
-                k = 4
+                k = 3
                 q = 0
                 for i in range(k):
                     for j in range(0, k - q):
@@ -210,4 +210,4 @@ class PopulationManager:
 
 
 population_manager = PopulationManager(25, Maze(), 1)
-population_manager.find_path()
+population_manager.find_path(use_ranking = True)
