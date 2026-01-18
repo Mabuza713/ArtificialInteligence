@@ -179,7 +179,7 @@ class PopulationManager:
                 scores = [t.evaulation_value for t in self.current_population]
                 min_score = min(scores)
 
-                weights = [(score - min_score) / sum(scores)  + 1for score in scores]
+                weights = [(score - min_score)  + 1for score in scores]
                 new_population.extend(random.choices(self.current_population, weights=weights, k=1))
 
             if use_ranking:
