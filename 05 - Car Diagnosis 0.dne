@@ -1,0 +1,559 @@
+// ~->[DNET-1]->~
+
+// File created by an unlicensed user using Netica 7.01 on Jan 12, 2026 at 17:48:59 UTC.
+
+bnet N5___Car_Diagnosis_0 {
+AutoCompile = TRUE;
+autoupdate = TRUE;
+comment = "\n\
+	Car Diagnosis 0                      Copyright 1998-2011 Norsys Software Corp.\n\n\
+	This is a simplified example Bayes net to represent the working \n\
+	relationships between parts of a car.\n\n\
+	It has only the nodes and links; it does not have any probabilistic\n\
+	relations (CPTs) entered.  If it had CPTs, it could be used \n\
+	for diagnosing car problems, among other things.\n\n\
+	This network was designed by Norsys Software Corp.\n\n\n\
+	TUTORIAL:          Automatic Learning of Probabilities\n\
+	--------\n\n\
+	As mentioned above, this Bayes net does not have any CPTs\n\
+	(conditional probability tables).  You can verify that by clicking\n\
+	on a node to select it, and then choosing Table->View/Edit (or right-click\n\
+	and choose Table...).\n\
+	The table will be empty.  You can tell that ALL the tables are empty\n\
+	because if you select all the nodes and try to choose Report->CPT Tables \n\
+	you will see that the menu entry is dimmed.\n\n\
+	Choose File->Open As Text, and open \"Car Cases.cas\".  The columns don't line\n\
+	up very well because of the tab stop settings, but you can see that it has\n\
+	a line near the top with headings for the columns, which are the node names.\n\
+	Each subsequent line stands for observations made during a diagnosis \n\
+	situation with a particular car.  An asterisk indicates an observation that\n\
+	wasn't made.\n\n\
+	We can use this set of past observations to learn the probabilities for the\n\
+	car diagnosis Bayes net.  Click in the Bayes net to make it active\n\
+	(but make sure no nodes are selected), and choose Cases->Learn->Incorp Case File.  \n\
+	Select \"Car Cases.cas\" from the dialog box, and accept the default of 1 for \n\
+	the degree.  The CPTs will be learned very quickly.\n\n\
+	Click on \"Spark Quality\" and then choose Table->View/Edit to see one of\n\
+	the tables learned.  Then using the pull-down menu in the upper left of that\n\
+	window, you can view the learned CPTs of other nodes.\n\n\
+	If you now have further data of more observations, it is easy to combine\n\
+	it with what has already been learned.  Choose Cases->Learn->Incorp Case File,  \n\
+	this time select \"More Car Cases.cas\" from the dialog box. Do not remove \n\
+	existing CPTs when prompted, and again accept the default of 1 for the degree.  \n\
+	After the learning, it will be as if Netica learned from one large file of \n\
+	cases containing the cases from both files.\n\n\
+	At this point you may want to compile the network and try some inference\n\
+	to see if the results make sense.  For example, try entering findings of\n\
+	bright, dim and off to Headlights (indicating how the headlights look when\n\
+	they are turned on).  If the headlights are dim, then it is believed that\n\
+	Voltage at Plug will be weak, but if Battery Voltage is measured as strong,\n\
+	then the plug voltage changes to strong as well, overriding the headlight\n\
+	observation.\n\n\
+	If you want to remove the effects of learning from \"Car Cases.cas\", so that\n\
+	the network will be as if it had only learned from \"More Car Cases.cas\", \n\
+	then choose Cases->Learn->Incorp Case File, select \"Car Cases.cas\" \n\
+	from the dialog box, and this time change the degree to -1 (to unlearn). \n\
+	After the unlearning, it will be as if the network had only learned from\n\
+	\"More Car Cases.cas\".\n\n\
+	Now we can test the performance of this network using the case file\n\
+	\"Car Cases.cas\".  In general, you can use a file of cases that were used\n\
+	during the learning to also test the performance, but that can produce\n\
+	misleading results, and it is better to use a set of test cases that were\n\
+	not used during the learning, as we will do now.\n\n\
+	Suppose we want all the nodes except Headlights, Battery Age, Car Cranks,\n\
+	and Car Starts to be unobserved.  That is fairly difficult diagnosis,\n\
+	since so few things are being observed.  Select those nodes (by holding down\n\
+	the <Ctrl> key while clicking on the node titles), and then choose \n\
+	Edit->Select Nodes->Invert Selection, to reverse the selection (since we want \n\
+	the unobserved nodes to be selected).  \n\
+	Then choose Cases->Test With Cases, and select \"Car Cases.cas\".\n\n\
+	A report will be generated for each node being diagnosed (i.e. unobserved).\n\
+	For other networks, depending on what the nodes represent, these could be \n\
+	diagnosis, predictions, classifications, or a combination.\n\n\
+	Look at the report for PlugVolt:Voltage At Plug.  The confusion matrix shows \n\
+	that most of the diagnosis were correct (9.78% in error).  Each number in the\n\
+	matrix corresponds to how many of the test cases fell into that category.\n\
+	See the Netica onscreen help on Test With Cases for further information.\n\n\n\
+	";
+author = "BoerlageB";
+whenchanged = 1768240117;
+
+visual V1 {
+	defdispform = BELIEFBARS;
+	nodelabeling = TITLE;
+	NodeMaxNumEntries = 50;
+	nodefont = font {shape= "Arial"; size= 10;};
+	linkfont = font {shape= "Arial"; size= 9;};
+	ShowLinkStrengths = 1;
+	windowposn = (27, 2, 752, 632);
+	CommentShowing = TRUE;
+	CommentWindowPosn = (23, 611, 764, 924);
+	resolution = 72;
+	drawingbounds = (700, 579);
+	showpagebreaks = FALSE;
+	usegrid = TRUE;
+	gridspace = (6, 6);
+	NodeSet Node {BuiltIn = 1; Color = 0x00c0c0c0;};
+	NodeSet Nature {BuiltIn = 1; Color = 0x00f8eed2;};
+	NodeSet Deterministic {BuiltIn = 1; Color = 0x00d3caa6;};
+	NodeSet Finding {BuiltIn = 1; Color = 0x00c8c8c8;};
+	NodeSet Constant {BuiltIn = 1; Color = 0x00ffffff;};
+	NodeSet ConstantValue {BuiltIn = 1; Color = 0x00ffffb4;};
+	NodeSet Utility {BuiltIn = 1; Color = 0x00ffbdbd;};
+	NodeSet Decision {BuiltIn = 1; Color = 0x00dee8ff;};
+	NodeSet Documentation {BuiltIn = 1; Color = 0x00f0fafa;};
+	NodeSet Title {BuiltIn = 1; Color = 0x00ffffff;};
+	PrinterSetting A {
+		margins = (1270, 1270, 1270, 1270);
+		magnify = 1;
+		};
+	};
+
+node Alter {
+	discrete = TRUE;
+	states = (okay, faulty);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.9969181,   0.003081884);
+	numcases = 350;
+	title = "Alternator";
+	whenchanged = 1768240117;
+	belief = (0.9969181, 0.003081884);
+	visual V1 {
+		center = (588, 54);
+		height = 8;
+		};
+	};
+
+node Charging {
+	discrete = TRUE;
+	states = (okay, faulty);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (Alter);
+	probs = 
+		// okay         faulty        // Alter  
+		  (0.4969761,   0.5030239,    // okay   
+		   1.028646e-5, 0.9999897);   // faulty ;
+	numcases = 
+		                 // Alter  
+		  (348.9214,     // okay   
+		   1.078669);    // faulty ;
+	title = "Charging system";
+	whenchanged = 1768240117;
+	belief = (0.4954445, 0.5045555);
+	visual V1 {
+		center = (588, 132);
+		height = 9;
+		};
+	};
+
+node BatAge {
+	discrete = FALSE;
+	states = (new, old, very_old);
+	levels = (0, 2, 5, INFINITY);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// new          old          very old     
+		  (0.3850483,   0.4320219,   0.1829298);
+	numcases = 350;
+	title = "Battery age";
+	comment = "New 0-2 yrs, Old 3-5 yrs, Very-old >5 yrs";
+	whenchanged = 1768240117;
+	belief = (0.3850483, 0.4320219, 0.1829298);
+	visual V1 {
+		center = (384, 102);
+		height = 11;
+		};
+	};
+
+node BatVolt {
+	discrete = TRUE;
+	states = (strong, weak, dead);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (Charging, BatAge);
+	probs = 
+		// strong       weak         dead          // Charging BatAge   
+		  (0.9579101,   0.04208974,  1.725516e-7,  // okay     new      
+		   0.8398454,   0.1328208,   0.02733378,   // okay     old      
+		   0.5879219,   0.3013148,   0.1107632,    // okay     very old 
+		   1.588006e-7, 0.3111704,   0.6888294,    // faulty   new      
+		   0.01672901,  0.1904872,   0.7927838,    // faulty   old      
+		   2.679223e-7, 3.154863e-7, 0.9999994);   // faulty   very old ;
+	numcases = 
+		                 // Charging BatAge   
+		  (66.05032,     // okay     new      
+		   82.62985,     // okay     old      
+		   24.7255,      // okay     very old 
+		   68.71666,     // faulty   new      
+		   68.57787,     // faulty   old      
+		   39.3);        // faulty   very old ;
+	title = "Battery voltage";
+	whenchanged = 1768240117;
+	belief = (0.4194344, 0.1657433, 0.4148223);
+	visual V1 {
+		center = (588, 222);
+		height = 10;
+		};
+	};
+
+node MFuse {
+	discrete = TRUE;
+	states = (okay, blown);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// okay         blown        
+		  (0.9938686,   0.006131376);
+	numcases = 350;
+	title = "Main fuse";
+	whenchanged = 1768240117;
+	belief = (0.9938686, 0.006131376);
+	visual V1 {
+		center = (186, 90);
+		height = 12;
+		};
+	};
+
+node Dist {
+	discrete = TRUE;
+	states = (okay, faulty);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.9909839,   0.009016104);
+	numcases = 349;
+	title = "Distributer";
+	whenchanged = 1768240117;
+	belief = (0.9909839, 0.009016104);
+	visual V1 {
+		center = (114, 198);
+		height = 5;
+		};
+	};
+
+node PlugVolt {
+	discrete = TRUE;
+	states = (strong, weak, none);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (MFuse, Dist, BatVolt);
+	probs = 
+		// strong       weak         none          // MFuse Dist   BatVolt 
+		  (0.898954,    0.07242578,  0.02862019,   // okay  okay   strong  
+		   1.920444e-7, 0.9267524,   0.07324743,   // okay  okay   weak    
+		   6.969849e-8, 7.024407e-8, 1,            // okay  okay   dead    
+		   1.075624e-5, 0.9999781,   1.109247e-5,  // okay  faulty strong  
+		   1.00148e-5,  1.065222e-5, 0.9999793,    // okay  faulty weak    
+		   8.933814e-6, 1.201513e-5, 0.9999791,    // okay  faulty dead    
+		   5.548302e-6, 5.344471e-6, 0.9999891,    // blown okay   strong  
+		   5.128508e-4, 0.9990373,   4.49882e-4,   // blown okay   weak    
+		   4.833305e-5, 4.357963e-5, 0.9999081,    // blown okay   dead    
+		   4.302768e-4, 4.302767e-4, 0.9991394,    // blown faulty strong  
+		   0.4088256,   0.2955872,   0.2955872,    // blown faulty weak    
+		   0.7785798,   0.1107101,   0.1107101);   // blown faulty dead    ;
+	numcases = 
+		                 // MFuse Dist   BatVolt 
+		  (144.4562,     // okay  okay   strong  
+		   54.62875,     // okay  okay   weak    
+		   143.6493,     // okay  okay   dead    
+		   1.000032,     // okay  faulty strong  
+		   1.000031,     // okay  faulty weak    
+		   1.119941,     // okay  faulty dead    
+		   1.871094,     // blown okay   strong  
+		   0.02222811,   // blown okay   weak    
+		   0.229465,     // blown okay   dead    
+		   0.02324085,   // blown faulty strong  
+		   3.383096e-5,  // blown faulty weak    
+		   9.032602e-5); // blown faulty dead    ;
+	title = "Voltage at plug";
+	whenchanged = 1768240117;
+	belief = (0.3713841, 0.1859742, 0.4426417);
+	visual V1 {
+		center = (294, 198);
+		height = 15;
+		};
+	};
+
+node StMotor {
+	discrete = TRUE;
+	states = (okay, faulty);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// okay         faulty       
+		  (0.9938416,   0.006158437);
+	numcases = 350;
+	title = "Starter Motor";
+	whenchanged = 1768240117;
+	belief = (0.9938416, 0.006158437);
+	visual V1 {
+		center = (138, 468);
+		height = 14;
+		};
+	};
+
+node Starter {
+	discrete = TRUE;
+	states = (okay, faulty);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (MFuse, StMotor, BatVolt);
+	probs = 
+		// okay         faulty        // MFuse StMotor BatVolt 
+		  (0.9738373,   0.02616269,   // okay  okay    strong  
+		   0.891782,    0.108218,     // okay  okay    weak    
+		   0.04760202,  0.952398,     // okay  okay    dead    
+		   1.013169e-5, 0.9999899,    // okay  faulty  strong  
+		   0.9997102,   2.898248e-4,  // okay  faulty  weak    
+		   9.180198e-6, 0.9999908,    // okay  faulty  dead    
+		   5.977463e-6, 0.999994,     // blown okay    strong  
+		   0.99955,     4.500068e-4,  // blown okay    weak    
+		   0.9999391,   6.086523e-5,  // blown okay    dead    
+		   0.5000028,   0.4999972,    // blown faulty  strong  
+		   0.5,         0.5,          // blown faulty  weak    
+		   0.5,         0.5);         // blown faulty  dead    ;
+	numcases = 
+		                 // MFuse StMotor BatVolt 
+		  (145.4257,     // okay  okay    strong  
+		   55.59425,     // okay  okay    weak    
+		   144.6787,     // okay  okay    dead    
+		   1.03053,      // okay  faulty  strong  
+		   0.03451311,   // okay  faulty  weak    
+		   1.09046,      // okay  faulty  dead    
+		   1.894295,     // blown okay    strong  
+		   0.02222195,   // blown okay    weak    
+		   0.2295153,    // blown okay    dead    
+		   2.000013e-5,  // blown faulty  strong  
+		   2e-5,         // blown faulty  weak    
+		   2e-5);        // blown faulty  dead    ;
+	title = "Starter system";
+	whenchanged = 1768240117;
+	belief = (0.573527, 0.4264729);
+	visual V1 {
+		center = (330, 468);
+		height = 13;
+		link 1 {
+			path = ((108, 115), (18, 144), (18, 432), (228, 432), (254, 441));
+			};
+		};
+	};
+
+node Lights {
+	discrete = TRUE;
+	states = (bright, dim, off);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (BatVolt);
+	probs = 
+		// bright       dim          off           // BatVolt 
+		  (0.9411767,   7.352942e-8, 0.05882319,   // strong  
+		   2.328654e-7, 0.9555252,   0.04447459,   // weak    
+		   7.246446e-8, 7.246446e-8, 1);           // dead    ;
+	numcases = 
+		                 // BatVolt 
+		  (136,          // strong  
+		   45.00144,     // weak    
+		   137.9987);    // dead    ;
+	title = "Headlights";
+	whenchanged = 1768240117;
+	belief = (0.3947619, 0.158372, 0.446866);
+	visual V1 {
+		center = (588, 336);
+		height = 16;
+		};
+	};
+
+node Plugs {
+	discrete = TRUE;
+	states = (okay, too_wide, fouled);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = ();
+	probs = 
+		// okay         too wide     fouled       
+		  (0.7157886,   0.09800394,  0.1862075);
+	numcases = 349;
+	title = "Spark plugs";
+	whenchanged = 1768240117;
+	belief = (0.7157886, 0.09800393, 0.1862075);
+	visual V1 {
+		center = (390, 282);
+		height = 3;
+		};
+	};
+
+node SpkQual {
+	discrete = TRUE;
+	states = (good, bad, very_bad);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (Plugs, PlugVolt);
+	probs = 
+		// good         bad          very bad      // Plugs    PlugVolt 
+		  (1,           1.286223e-7, 1.053069e-7,  // okay     strong   
+		   2.938032e-7, 0.9999992,   4.656044e-7,  // okay     weak     
+		   9.998912e-8, 1.005717e-7, 1,            // okay     none     
+		   7.918387e-7, 0.9999985,   7.286415e-7,  // too wide strong   
+		   1.674286e-6, 2.056985e-6, 0.9999962,    // too wide weak     
+		   7.054138e-7, 7.085966e-7, 0.9999986,    // too wide none     
+		   2.478943e-6, 0.9999969,   6.427166e-7,  // fouled   strong   
+		   1.011942e-6, 1.137582e-6, 0.9999979,    // fouled   weak     
+		   3.552211e-7, 3.55498e-7,  0.9999993);   // fouled   none     ;
+	numcases = 
+		                 // Plugs    PlugVolt 
+		  (95.85955,     // okay     strong   
+		   42.61687,     // okay     weak     
+		   108.3339,     // okay     none     
+		   13.72417,     // too wide strong   
+		   6.205207,     // too wide weak     
+		   14.27408,     // too wide none     
+		   19.2759,      // fouled   strong   
+		   11.28987,     // fouled   weak     
+		   33.42073);    // fouled   none     ;
+	title = "Spark quality";
+	whenchanged = 1768240117;
+	belief = (0.2658329, 0.2386696, 0.4954975);
+	visual V1 {
+		center = (312, 366);
+		height = 4;
+		link 2 {
+			path = ((282, 234), (282, 288), (299, 331));
+			};
+		};
+	};
+
+node Cranks {
+	discrete = TRUE;
+	states = (true, false);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (Starter);
+	probs = 
+		// true         false         // Starter 
+		  (0.8284543,   0.1715457,    // okay    
+		   0.05164557,  0.9483544);   // faulty  ;
+	numcases = 
+		                 // Starter 
+		  (196.3721,     // okay    
+		   151.628);     // faulty  ;
+	title = "Car cranks";
+	whenchanged = 1768240117;
+	belief = (0.4971664, 0.5028336);
+	visual V1 {
+		center = (438, 540);
+		height = 2;
+		link 1 {
+			path = ((370, 496), (397, 513));
+			};
+		};
+	};
+
+node Timing {
+	discrete = TRUE;
+	states = (good, bad, very_bad);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (Dist);
+	probs = 
+		// good         bad          very bad      // Dist   
+		  (0.8702326,   0.1200706,   0.009696756,  // okay   
+		   0.328404,    0.3519619,   0.3196341);   // faulty ;
+	numcases = 
+		                 // Dist   
+		  (342.8534,     // okay   
+		   3.14664);     // faulty ;
+	title = "Spark timing";
+	whenchanged = 1768240117;
+	belief = (0.8653475, 0.1221613, 0.01249118);
+	visual V1 {
+		center = (114, 378);
+		height = 6;
+		};
+	};
+
+node Starts {
+	discrete = TRUE;
+	states = (true, false);
+	kind = NATURE;
+	chance = CHANCE;
+	parents = (Cranks, Timing, SpkQual);
+	probs = 
+		// true         false         // Cranks Timing   SpkQual  
+		  (0.8194638,   0.1805362,    // true   good     good     
+		   0.4174845,   0.5825155,    // true   good     bad      
+		   3.60862e-7,  0.9999996,    // true   good     very bad 
+		   0.7406791,   0.2593208,    // true   bad      good     
+		   0.594938,    0.4050619,    // true   bad      bad      
+		   2.489736e-6, 0.9999975,    // true   bad      very bad 
+		   0.9999897,   1.032343e-5,  // true   very bad good     
+		   5.592622e-6, 0.9999944,    // true   very bad bad      
+		   3.361856e-4, 0.9996638,    // true   very bad very bad 
+		   9.374623e-7, 0.999999,     // false  good     good     
+		   6.259972e-7, 0.9999993,    // false  good     bad      
+		   9.143219e-8, 1,            // false  good     very bad 
+		   4.952831e-6, 0.9999951,    // false  bad      good     
+		   3.236317e-5, 0.9999676,    // false  bad      bad      
+		   6.92881e-7,  0.9999993,    // false  bad      very bad 
+		   0.001030193, 0.9989698,    // false  very bad good     
+		   4.739657e-5, 0.9999526,    // false  very bad bad      
+		   8.841575e-6, 0.9999912);   // false  very bad very bad ;
+	numcases = 
+		                 // Cranks Timing   SpkQual  
+		  (61.29811,     // true   good     good     
+		   39.24016,     // true   good     bad      
+		   28.48569,     // true   good     very bad 
+		   8.988176,     // true   bad      good     
+		   9.509,        // true   bad      bad      
+		   4.016491,     // true   bad      very bad 
+		   1.071693,     // true   very bad good     
+		   1.877288,     // true   very bad bad      
+		   0.02974548,   // true   very bad very bad 
+		   12.47295,     // false  good     good     
+		   16.4705,      // false  good     bad      
+		   109.4283,     // false  good     very bad 
+		   2.019047,     // false  bad      good     
+		   0.3089932,    // false  bad      bad      
+		   14.43249,     // false  bad      very bad 
+		   0.009706919,  // false  very bad good     
+		   0.2109857,    // false  very bad bad      
+		   1.13102);     // false  very bad very bad ;
+	title = "Car starts";
+	whenchanged = 1768240117;
+	belief = (0.2538111, 0.7461889);
+	visual V1 {
+		center = (612, 540);
+		height = 7;
+		link 2 {
+			path = ((200, 403), (234, 414), (492, 414), (587, 513));
+			};
+		link 3 {
+			path = ((398, 374), (552, 390), (602, 513));
+			};
+		};
+	};
+
+node TITLE1 {
+	discrete = FALSE;
+	kind = CONSTANT;
+	parents = ();
+	title = "Car Diagnosis 0";
+	whenchanged = 904506242;
+	visual V1 {
+		center = (318, 24);
+		font = font {shape= "Times New Roman"; size= 18;};
+		height = 1;
+		};
+	};
+ElimOrder = (Alter, Lights, Charging, BatAge, StMotor, Starter, Plugs, Starts, Timing, SpkQual, BatVolt, MFuse, Dist, PlugVolt, Cranks);
+};

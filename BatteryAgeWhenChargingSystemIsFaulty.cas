@@ -1,0 +1,2 @@
+Charging	BatVolt	MFuse	Dist	PlugVolt	StMotor	Starter	Lights	Plugs	SpkQual	Cranks	Timing	Starts
+faulty	dead	okay	okay	none	okay	faulty	bright	okay	very_bad	true	very_bad	false
